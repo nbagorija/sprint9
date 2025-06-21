@@ -113,6 +113,11 @@ func TestMaxChunks(t *testing.T) {
 			input:    []int{5, 5, 5, 5, 5, 5, 5, 5},
 			expected: 5,
 		},
+		{
+			name:     "Больше 8 элементов",
+			input:    []int{1, 5, 3, 8, 2, 7, 4, 6, 9, 10, 11},
+			expected: 11,
+		},
 	}
 
 	for _, tt := range tests {

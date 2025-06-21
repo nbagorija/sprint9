@@ -20,7 +20,7 @@ func generateRandomElements(size int) []int {
 
 	data := make([]int, size)
 	for i := 0; i < size; i++ {
-		data[i] = rand.Intn(1000000) // Генерирует числа до 1 миллиона
+		data[i] = rand.Int() // Генерирует числа без ограничения
 	}
 	return data
 }
@@ -46,6 +46,11 @@ func maxChunks(data []int) int {
 		return 0
 	}
 
+	// Если длина слайса меньше или равна числу чанков, используем однопоточный подход
+	if len(data) <= CHUNKS {
+		return maximum(data)
+	}
+
 	chunkSize := (len(data) + CHUNKS - 1) / CHUNKS // Деление с округлением вверх
 	maxValues := make([]int, CHUNKS)
 	var wg sync.WaitGroup
@@ -56,14 +61,11 @@ func maxChunks(data []int) int {
 		if end > len(data) {
 			end = len(data)
 		}
-
-		if start < len(data) {
+		if start < len(data) { // Убедимся, что есть элементы для обработки
 			wg.Add(1)
 			go func(chunk []int, index int) {
 				defer wg.Done()
-				if len(chunk) > 0 {
-					maxValues[index] = maximum(chunk)
-				}
+				maxValues[index] = maximum(chunk)
 			}(data[start:end], i)
 		}
 	}
